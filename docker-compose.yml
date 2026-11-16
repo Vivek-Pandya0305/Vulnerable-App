@@ -1,0 +1,14 @@
+# Web App Security Lab: OWASP Juice Shop (target) + OWASP ZAP (scanner)
+services:
+  juice-shop:
+    image: bkimminich/juice-shop
+    ports:
+      - "127.0.0.1:3000:3000"   # local machine only, never expose this app
+
+  zap:                           # only runs when you ask for it (see README)
+    image: ghcr.io/zaproxy/zaproxy:stable
+    profiles: ["scan"]
+    depends_on: [juice-shop]
+    volumes:
+      - ./reports:/zap/wrk:rw
+    command: zap-baseline.py -t http://juice-shop:3000 -r zap-report.html -I
